@@ -1,15 +1,20 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Main where
 
 import Nouns
 
-import Control.Concurrent
+import Data.ByteString.Lazy.Char8 (pack)
 import Data.Char
 import Data.Maybe
+import Data.Text (unpack)
 import System.Environment
 import System.Exit
 import System.Random
-import System.IO
-import Network
+import Network.HTTP.Types (status200, status404)
+import Network.Wai
+import Network.Wai.Handler.Warp (run)
+import Network.Wai.Middleware.Gzip (gzip, def)
 
 port_number = 5002
 
@@ -37,28 +42,18 @@ berrify str = case lastN 5 str of
 capitalize :: String -> String
 capitalize (x:xs) = (toUpper x):xs
 
+response :: [String] -> IO String
+response args = do
+    name <- generateName $ getFirstLetter args
+    adjective <- getRandomElement adjectives
+    return ((capitalize adjective) ++ " " ++ (capitalize (berrify name)))
+
+application request respond = do
+    let args = map unpack $ pathInfo request
+    let _status = if args!!0 == "favicon.ico" then status404 else status200
+    msg <- response args
+    respond $ responseLBS _status [("Content-Type", "text/plain")] (pack msg)
+
+
 main :: IO ()
-main = withSocketsDo $ do
-    sock <- listenOn $ PortNumber port_number
-    let port = show port_number
-    putStrLn ("Listening on port " ++ port ++ ": http://127.0.0.1:" ++ port)
-    loop sock
-
-loop :: Socket -> IO ()
-loop sock = do
-   (h,_,_) <- accept sock
-   forkIO $ body h
-   loop sock
-   where
-       body h = do
-           name <- generateName $ getFirstLetter []
-           adjective <- getRandomElement adjectives
-           let berry = ((capitalize adjective) ++ " " ++ (capitalize (berrify name)))
-           hPutStr h $ msg berry
-           hFlush h
-           hClose h
-
-msg :: String -> String
-msg str = "HTTP/1.0 200 OK\r\nContent-Length: " ++ len ++ "\r\n\r\n" ++ str ++ "\r\n"
-    where
-        len = show $ length str
+main = run 5002 $ gzip def application

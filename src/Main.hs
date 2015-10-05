@@ -53,12 +53,12 @@ application request respond = do
     let isFavicon = ((args /= []) && (args!!0 == "favicon.ico"))
     let _status = if isFavicon then status404 else status200
     msg <- response args
-    respond $ responseLBS _status [("Content-Type", "text/plain")] (pack msg)
+    respond $ responseLBS _status [("Content-Type", "text/plain")] (pack (msg ++ "\n"))
 
 
 main :: IO ()
 main = do
     env <- getEnvironment
     let port = maybe port_number read $ lookup "PORT" env
-    putStrLn ("Server started at http://127.0.01:" ++ (show port))
+    putStrLn ("Server started at http://127.0.0.1:" ++ (show port))
     run port $ gzip def application

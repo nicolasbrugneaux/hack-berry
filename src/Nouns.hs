@@ -30,6 +30,7 @@ prefixByLetter 'w' = lines "wild\nwine\nwagtail\nwallaby\nwallaroo\nwalleri\nwam
 prefixByLetter 'x' = lines "xeno\nxmen"
 prefixByLetter 'y' = lines "yagouaroundi\nyak\nyew\nyoung"
 prefixByLetter 'z' = lines "zebra\nzorilla"
+prefixByLetter _   = prefix
 
 
 adjectives :: [String]

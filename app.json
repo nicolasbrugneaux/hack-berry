@@ -1,0 +1,11 @@
+{
+  "name": "hack-berry",
+  "description": "Berry name generator",
+  "repository": "https://github.com/nicolasbrugneaux/hack-berry",
+  "env": {
+    "BUILDPACK_URL": {
+      "description": "Heroku buildpack for deploying Haskell apps",
+      "value": "https://github.com/mietek/haskell-on-heroku"
+    }
+  }
+}

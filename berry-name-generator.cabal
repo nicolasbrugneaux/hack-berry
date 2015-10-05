@@ -9,12 +9,14 @@ author:              Nicolas Brugneaux
 maintainer:          nicolas.brugneaux@gmail.com
 copyright:           2015 Nicolas Brugneaux
 build-type:          Simple
-cabal-version:       >=1.10
+cabal-version:       >=1.20
 
 executable berry-name-generator
   hs-source-dirs:      src
   main-is:             Main.hs
   default-language:    Haskell2010
+  default-extensions:  OverloadedStrings
+  ghc-options:         -O2 -Wall -threaded
   build-depends:       base >= 4.7 && < 5,
                        random >= 1.1,
                        network >= 2.6,
@@ -24,3 +26,4 @@ executable berry-name-generator
                        http-types >= 0.8,
                        bytestring >= 0.10,
                        text >= 1.2
+  other-modules:       Nouns
